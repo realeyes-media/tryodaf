@@ -1,0 +1,12 @@
+FROM jfloff/alpine-python:recent-onbuild
+
+# Onbuild tage copies in requirements.txt and installs it
+
+RUN mkdir -p /testapp
+
+WORKDIR /testapp
+
+#COPY get-features.py /testapp/get-features.py
+#COPY example.json /testapp/example.json
+
+CMD [ "python", "/testapp/get-features.py", "--json", "/testapp/example.json" ]
