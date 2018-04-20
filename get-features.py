@@ -17,10 +17,14 @@ args = parser.parse_args()
 with open(args.json) as json_data:
     parsed_json = json.load(json_data)
 
+# Maybe use a collection dict?
+# Break out the keyvalue maps
+only_keyvalue = parsed_json['dependencyversions']
+
 # Poll ElasticSearch for data
 
 # Outputs
 if args.json:
-    print(json.dumps(parsed_json))
+    print(json.dumps(only_keyvalue))
 if args.url:
     print(args.url)
