@@ -2,17 +2,25 @@ import argparse
 import json
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
-client = Elasticsearch()
+esclient = Elasticsearch()
 
 # Gather CLI arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--input", help="Path to JSON file with packages and versions")
+parser.add_argument("--json", help="Path to JSON file with packages and versions")
+parser.add_argument("--index", help="ElasticSearch index to search")
+#parser.add_argument("--yaml", help="Path to YAML file with packages and versions")
 parser.add_argument("-u", "--url", help="URL for ElasticSearch server to query")
 parser.add_argument("-v", "--verbose", action="store_true", help="Give more verbose output")
 args = parser.parse_args()
 
-# Do things
-if args.input:
-    print(args.input)
+# Import JSON
+with open(args.json) as json_data:
+    parsed_json = json.load(json_data)
+
+# Poll ElasticSearch for data
+
+# Outputs
+if args.json:
+    print(json.dumps(parsed_json))
 if args.url:
     print(args.url)
