@@ -14,17 +14,21 @@ parser.add_argument("-v", "--verbose", action="store_true", help="Give more verb
 args = parser.parse_args()
 
 # Import JSON
-with open(args.json) as json_data:
+with open(args.json, 'rb') as json_data:
     parsed_json = json.load(json_data)
 
-# Maybe use a collection dict?
-# Break out the keyvalue maps
+# Get the package:version into dictionary pack_version
+pack_version = {}
 only_keyvalue = parsed_json['dependencyversions']
+for stuff in only_keyvalue:
+    pack_version.update({stuff["package"]:stuff["version"]})
 
 # Poll ElasticSearch for data
 
+
 # Outputs
 if args.json:
-    print(json.dumps(only_keyvalue))
+    print(json.dumps(pack_version))
+#    print(type(parsed_json))
 if args.url:
     print(args.url)
