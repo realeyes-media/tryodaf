@@ -101,9 +101,10 @@ with open(args.json, 'rb') as json_data:
 
 # Get the package:version into dictionary pack_version
 pack_version = {}
-only_keyvalue = parsed_json['dependencyversions']
-for stuff in only_keyvalue:
+#only_keyvalue = parsed_json['dependencyversions']
+for stuff in parsed_json:
     pack_version.update({stuff["package"]:stuff["version"]})
+print(json.dumps(pack_version))
 
 # Get back features and bugs from ElasticSearch 6.2 for all packages
 for pack,vers in pack_version.items():
