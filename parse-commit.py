@@ -6,16 +6,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--input", help="Newline separated commit message")
 args = parser.parse_args()
 
-# Read STDIN
+# Read Input File and split by lines into a list
 input_file = open(args.input).read().splitlines()
 
 # Set up Output format
 field_split = dict()
 field_split['featureorbugfix'] = ""
 field_split['featurenew'] = []
-field_split['featuretotal'] = []
 field_split['bugfixnew'] = []
-field_split['bugfixtotal'] = []
 field_split['ticketcustomer'] = []
 
 
