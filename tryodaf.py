@@ -1,5 +1,5 @@
 ## Track yo (dang) features
-# Requires Python 3.5+, ElasticSearch 6.2+, and all the args are required except the defaults.
+# Requires Python 3.5+, ElasticSearch 6.2+, and most arguments are required
 
 import argparse
 import json
