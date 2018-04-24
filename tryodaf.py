@@ -17,6 +17,7 @@ parser.add_argument("--prmessage", help="File path to a newline separated PR des
 parser.add_argument("--json", help="Path to JSON file with package:version list", required=True)
 parser.add_argument("--index", help="ElasticSearch index to search", required=True)
 parser.add_argument("-u", "--url", help="URL for ElasticSearch server to query", required=True)
+parser.add_argument("--changelog", help="The previous CHANGELOG in json format for loading in total values", required=True)
 parser.add_argument("--doctype", help="ElasticSearch doc type to search. (default: doc)", default="doc")
 parser.add_argument("--outputfile", help="Name of JSON file to output results", default="output.json")
 #parser.add_argument("-v", "--verbose", action="store_true", help="Give more verbose output")
@@ -35,6 +36,7 @@ final_json['featuretotal'] = []
 final_json['bugfixtotal'] = []
 final_json['bugfixnew'] = []
 final_json['ticketcustomer'] = []
+final_json['dependencyversions'] = []
 
 #### Define a function to remove duplicates
 def Remove(duplicate):
@@ -87,28 +89,29 @@ for x in pr_input_file:
     else:
         print('Not a valid line')
 
-print('Output of PR Parse:')
-print(json.dumps(parsed_pr))
-
 #### Query ElasticSearch for dependency versions
 # Declare the lists we need to return
 feature_list = []
 bug_list = []
 
-# Import JSON
+# Import JSON files
 with open(args.json, 'rb') as json_data:
     parsed_json = json.load(json_data)
 
+with open(args.changelog, 'rb') as changelog_data:
+    old_changelog = json.load(changelog_data)
+
 # Get the package:version into dictionary pack_version
 pack_version = {}
-#only_keyvalue = parsed_json['dependencyversions']
-for stuff in parsed_json:
+only_keyvalue = parsed_json['dependencyversions']
+for stuff in only_keyvalue:
     pack_version.update({stuff["package"]:stuff["version"]})
 print(json.dumps(pack_version))
 
 # Get back features and bugs from ElasticSearch 6.2 for all packages
 for pack,vers in pack_version.items():
     # Make an API request for ES data
+#    print(args.url + "/" + args.index + "/" + args.doctype + "/_search?default_operator=AND&q=" + "name:" + "\"" + pack + "\"" + "+" + "version:" + vers)
     r = requests.get(args.url + "/" + args.index + "/" + args.doctype + "/_search?default_operator=AND&q=" + "name:" + "\"" + pack + "\"" + "+" + "version:" + vers)
     j = json.loads(r.text)
     # Navigate the nested JSON to get the data we want and add to list...check that number if anything breaks
@@ -121,20 +124,17 @@ features = Remove(feature_list)
 
 # Create a dictionary for the 2 lists and return as JSON
 es_results = { "featuretotal": features, "bugfixtotal": bugs }
-print('Output of ElasticSearch Query')
-print(json.dumps(es_results))
 
 #### Add step parts together so we combine and remove duplicates all the step dictionaries
 final_json['featureorbugfix'] = parsed_pr['featureorbugfix']
 final_json['featurenew'] = parsed_pr['featurenew']
 final_json['bugfixnew'] = parsed_pr['bugfixnew']
-final_json['featuretotal'].append(parsed_pr['featuretotal'])
-final_json['featuretotal'].append(es_results['featuretotal'])
-final_json['bugfixtotal'].append(parsed_pr['bugfixtotal'])
-final_json['bugfixtotal'].append(es_results['bugfixtotal'])
-final_json['featuretotal'].append(parsed_pr['featuretotal'])
+final_json['ticketcustomer'] = parsed_pr['ticketcustomer']
+final_json['featuretotal'] = Remove(parsed_pr['featurenew'] + es_results['featuretotal'] + old_changelog['featuretotal'])
+final_json['bugfixtotal'] = Remove(parsed_pr['bugfixnew'] + es_results['bugfixtotal'] + old_changelog['bugfixtotal'])
+final_json['dependencyversions'] = parsed_json['dependencyversions']
 
 #### Final Output
 print(json.dumps(final_json))
-with open(args.outfile, "w") as f:
+with open(args.outputfile, 'w') as f:
     json.dump(final_json, f)
