@@ -135,7 +135,7 @@ final_json['ticketcustomer'] = parsed_pr['ticketcustomer']
 final_json['featuretotal'] = Remove(parsed_pr['featurenew'] + es_results['featuretotal'] + old_changelog['featuretotal'])
 final_json['bugfixtotal'] = Remove(parsed_pr['bugfixnew'] + es_results['bugfixtotal'] + old_changelog['bugfixtotal'])
 #final_json['dependencyversions'] = parsed_json['dependencyversions']
-final_json['dependencyversions'] = parsed_json
+final_json['dependencyversions'] = pack_version
 
 #### Final Output
 print(json.dumps(final_json))
