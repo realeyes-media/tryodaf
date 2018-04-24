@@ -103,7 +103,9 @@ with open(args.changelog, 'rb') as changelog_data:
 
 # Get the package:version into dictionary pack_version
 pack_version = {}
-only_keyvalue = parsed_json['dependencyversions']
+#only_keyvalue = parsed_json['dependencyversions']
+only_keyvalue = parsed_json
+print(only_keyvalue)
 for stuff in only_keyvalue:
     pack_version.update({stuff["package"]:stuff["version"]})
 print(json.dumps(pack_version))
