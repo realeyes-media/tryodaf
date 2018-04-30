@@ -2,9 +2,9 @@
 Provide packages and versions, and get back features and bugs.
 
 # Usage
-python ./get-features.py --help
+python ./tryodaf.py --help
 ```
-usage: get-features.py [-h] [--json JSON] [--index INDEX] [-u URL]
+usage: tryodaf.py [-h] [--json JSON] [--index INDEX] [-u URL]
                        [--doctype DOCTYPE] [-v]
 
 optional arguments:
